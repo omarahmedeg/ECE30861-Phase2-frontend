@@ -217,26 +217,25 @@ export const api = {
   },
 
   async getPackageRating(id: string): Promise<PackageRating> {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/package/${id}/scores`,
-      {
-        headers: getAuthHeaders(),
-      }
-    );
+    // Use BASELINE endpoint - GET /artifact/model/{id}/rate
+    const response = await fetch(`${API_BASE_URL}/artifact/model/${id}/rate`, {
+      headers: getAuthHeaders(),
+    });
     if (!response.ok) throw new Error("Failed to get rating");
     const data = await response.json();
 
     // Transform snake_case backend response to frontend format
+    // Using the ModelRating response structure from OpenAPI spec
     return {
       BusFactor: data.bus_factor ?? 0,
       Correctness: data.performance_claims ?? 0,
       RampUp: data.ramp_up_time ?? 0,
       ResponsiveMaintainer: data.code_quality ?? 0,
-      LicenseScore: data.license_score ?? 0,
+      LicenseScore: data.license ?? 0,
       GoodPinningPractice: data.dataset_quality ?? 0,
       PullRequest: data.reviewedness ?? 0,
       NetScore: data.net_score ?? 0,
-      Reproducibility: data.reproducibility,
+      Reproducibility: data.reproducibility ?? 0,
     };
   },
 
