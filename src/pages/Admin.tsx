@@ -248,7 +248,7 @@ export default function Admin() {
                     Backend URL
                   </span>
                   <span className="text-sm font-mono">
-                    {import.meta.env.VITE_API_URL || "http://localhost:8000"}
+                    {"https://vmqqvhwppq.us-east-1.awsapprunner.com"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-2">
