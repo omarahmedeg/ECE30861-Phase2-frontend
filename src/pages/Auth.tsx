@@ -56,9 +56,22 @@ export default function Auth() {
 
     setLoading(true);
     try {
-      await api.createUser(signupData.username, signupData.password);
-      toast.success("Account created! Please log in.");
-      setSignupData({ username: "", password: "", confirmPassword: "" });
+      const response = await api.createUser(
+        signupData.username,
+        signupData.password
+      );
+      // Extract the token from the response (it comes with 'bearer' prefix)
+      const token = response.access_token.replace(/^bearer\s*/i, "");
+
+      // Set the auth token and user info
+      await login(
+        signupData.username,
+        signupData.password,
+        response.user.is_admin
+      );
+
+      toast.success("Account created successfully!");
+      navigate("/");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Signup failed");
     } finally {

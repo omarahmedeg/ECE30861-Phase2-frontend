@@ -76,7 +76,10 @@ export const api = {
     return token.replace(/^"?bearer\s*/i, "").replace(/"$/i, "");
   },
 
-  async createUser(username: string, password: string): Promise<void> {
+  async createUser(
+    username: string,
+    password: string
+  ): Promise<{ access_token: string; user: any }> {
     const response = await fetch(`${API_BASE_URL}/api/v1/user/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
@@ -91,6 +94,8 @@ export const api = {
       const error = await response.json();
       throw new Error(error.detail || "Failed to create user");
     }
+    const data = await response.json();
+    return data;
   },
 
   async getCurrentUser(): Promise<User> {
