@@ -218,8 +218,16 @@ export const api = {
 
   async getPackageRating(id: string): Promise<PackageRating> {
     // Use BASELINE endpoint - GET /artifact/model/{id}/rate
+    // This endpoint uses X-Authorization header with lowercase "bearer"
+    const token = getAuthToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      const cleanToken = token.replace(/^"?bearer\s*/i, "").replace(/"$/i, "");
+      headers["X-Authorization"] = `bearer ${cleanToken}`;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/artifact/model/${id}/rate`, {
-      headers: getAuthHeaders(),
+      headers,
     });
     if (!response.ok) throw new Error("Failed to get rating");
     const data = await response.json();
