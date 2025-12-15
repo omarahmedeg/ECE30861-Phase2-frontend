@@ -220,16 +220,22 @@ export const api = {
     // Use BASELINE endpoint - GET /artifact/model/{id}/rate
     // This endpoint uses X-Authorization header with lowercase "bearer"
     const token = getAuthToken();
-    const headers: Record<string, string> = {};
-    if (token) {
-      const cleanToken = token.replace(/^"?bearer\s*/i, "").replace(/"$/i, "");
-      headers["X-Authorization"] = `bearer ${cleanToken}`;
+    if (!token) {
+      throw new Error("Authentication required");
     }
-    
+
+    const cleanToken = token.replace(/^"?bearer\s*/i, "").replace(/"$/i, "");
+    const headers: Record<string, string> = {
+      "X-Authorization": `bearer ${cleanToken}`,
+    };
+
     const response = await fetch(`${API_BASE_URL}/artifact/model/${id}/rate`, {
       headers,
     });
-    if (!response.ok) throw new Error("Failed to get rating");
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || "Failed to get rating");
+    }
     const data = await response.json();
 
     // Transform snake_case backend response to frontend format
